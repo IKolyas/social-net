@@ -1,0 +1,18 @@
+volumes:
+  gosrc:
+
+services:
+  social-network:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: IKolyas/golang
+    volumes:
+      - ./app:/app
+      - gosrc:/go
+    networks:
+      - app-network
+    depends_on:
+      pgmaster:
+        condition: service_healthy
+    restart: unless-stopped

@@ -1,0 +1,9 @@
+networks:
+  app-network:
+    driver: bridge
+
+include:
+  - path: ./social-network/docker-compose.yml
+  - path: ./nginx/docker-compose.yml
+  - path: ./database/docker-compose.yml
+  - path: ./redis/docker-compose.yml

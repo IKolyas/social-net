@@ -1,0 +1,84 @@
+volumes:
+  pgmaster:
+  pgslave1:
+  pgslave2:
+
+services:
+  pgmaster:
+    image: postgis/postgis:17-3.5
+    ports:
+      - '${PGSQL_PORT:-5432}:5432'
+    environment:
+      PGPASSWORD: '${PGSQL_PASSWORD:-secret}'
+      POSTGRES_DB: '${PGSQL_DB}'
+      POSTGRES_USER: '${PGSQL_USER}'
+      POSTGRES_PASSWORD: '${PGSQL_PASSWORD:-secret}'
+    volumes:
+      - ./data/db.sql:/docker-entrypoint-initdb.d/db.sql
+      - pgmaster:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test:
+        - CMD
+        - pg_isready
+        - '-q'
+        - '-d'
+        - '${PGSQL_DB}'
+        - '-U'
+        - '${PGSQL_USER}'
+      retries: 3
+      timeout: 3s
+    restart: unless-stopped
+
+  pgslave1:
+    image: postgis/postgis:17-3.5
+    ports:
+      - '${SLAVE1_PORT:-15432}:5432'
+    environment:
+      PGPASSWORD: '${PGSQL_PASSWORD:-secret}'
+      POSTGRES_DB: '${PGSQL_DB}'
+      POSTGRES_USER: '${PGSQL_USER}'
+      POSTGRES_PASSWORD: '${PGSQL_PASSWORD:-secret}'
+    volumes:
+      - pgslave1:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test:
+        - CMD
+        - pg_isready
+        - '-q'
+        - '-d'
+        - '${PGSQL_DB}'
+        - '-U'
+        - '${PGSQL_USER}'
+      retries: 3
+      timeout: 3s
+    restart: unless-stopped
+
+  pgslave2:
+    image: postgis/postgis:17-3.5
+    ports:
+      - '${SLAVE2_PORT:-25432}:5432'
+    environment:
+      PGPASSWORD: '${PGSQL_PASSWORD:-secret}'
+      POSTGRES_DB: '${PGSQL_DB}'
+      POSTGRES_USER: '${PGSQL_USER}'
+      POSTGRES_PASSWORD: '${PGSQL_PASSWORD:-secret}'
+    volumes:
+      - pgslave2:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test:
+        - CMD
+        - pg_isready
+        - '-q'
+        - '-d'
+        - '${PGSQL_DB}'
+        - '-U'
+        - '${PGSQL_USER}'
+      retries: 3
+      timeout: 3s
+    restart: unless-stopped

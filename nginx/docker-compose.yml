@@ -1,0 +1,15 @@
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - '80:80'
+    volumes:
+      - ./settings/config/:/etc/nginx/conf.d/
+      - ./settings/nginx.conf:/etc/nginx/nginx.conf
+    working_dir: '/var/www/html'
+    networks:
+      - app-network
+    restart: unless-stopped
+    tty: true
+    depends_on:
+      - social-network
