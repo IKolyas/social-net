@@ -26,10 +26,25 @@ func (uc *PostUseCase) CreatePost(post *entities.Post) error {
 }
 
 func (uc *PostUseCase) UpdatePost(post *entities.Post) error {
+	// Инвалидируем кэш для ленты
+	cacheKey := fmt.Sprintf("feed_%s_*", post.AuthorUserID)
+	if err := uc.cache.Delete(cacheKey); err != nil {
+		logger.ErrorLogger.Printf("Failed to invalidate cache: %v", err)
+	}
 	return uc.postRepo.Update(post)
 }
 
 func (uc *PostUseCase) DeletePost(id string) error {
+	post, err := uc.postRepo.GetByID(id)
+	if err != nil {
+		return err
+	}
+
+	// Инвалидируем кэш для ленты
+	cacheKey := fmt.Sprintf("feed_%s_*", post.AuthorUserID)
+	if err := uc.cache.Delete(cacheKey); err != nil {
+		logger.ErrorLogger.Printf("Failed to invalidate cache: %v", err)
+	}
 	return uc.postRepo.Delete(id)
 }
 

@@ -65,7 +65,7 @@ func generateUsers(count int) []User {
 	cities := []string{"Москва", "Санкт-Петербург", "Казань", "Новосибирск"}
 
 	users := make([]User, count)
-	for i := 0; i < count; i++ {
+	for i := range count {
 		users[i] = User{
 			ID:         uuid.New().String(),
 			FirstName:  firstNames[rand.Intn(len(firstNames))],
@@ -81,7 +81,7 @@ func generateUsers(count int) []User {
 
 func generatePosts(users []User, count int) []Post {
 	posts := make([]Post, count)
-	for i := 0; i < count; i++ {
+	for i := range count {
 		posts[i] = Post{
 			ID:           uuid.New().String(),
 			Text:         fmt.Sprintf("Post content %d", i),
@@ -94,7 +94,7 @@ func generatePosts(users []User, count int) []Post {
 
 func generateFriends(users []User, count int) []Friend {
 	friends := make([]Friend, count)
-	for i := 0; i < count; i++ {
+	for i := range count {
 		user1 := users[rand.Intn(len(users))]
 		user2 := users[rand.Intn(len(users))]
 		if user1.ID != user2.ID {
