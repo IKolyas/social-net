@@ -10,15 +10,15 @@ RUN go mod download
 
 COPY ./app .
 
-# RUN CGO_ENABLED=0 GOOS=linux go build -o main cmd/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -o main cmd/main.go
 
-ENTRYPOINT [ "tail", "-f" ,"/dev/null" ]
+# ENTRYPOINT [ "tail", "-f" ,"/dev/null" ]
 
-#FOR PRODUCTION
-# FROM scratch
+# FOR PRODUCTION
+FROM scratch
 
-# WORKDIR /build
+WORKDIR /build
 
-# COPY --from=builder /app/main /build/main
+COPY --from=builder /app/main /build/main
 
-# ENTRYPOINT ["/build/main"]
+ENTRYPOINT ["/build/main"]

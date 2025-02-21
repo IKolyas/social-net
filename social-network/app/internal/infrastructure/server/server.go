@@ -1,6 +1,7 @@
 package server
 
 import (
+	"os"
 	"social_network/internal/infrastructure/cache"
 	"social_network/internal/infrastructure/database"
 	"social_network/internal/infrastructure/logger"
@@ -14,12 +15,18 @@ import (
 
 func StartServer() {
 	logger.Init()
+
+	// "postgres://social:social@pgmaster:5432/social"
+	// "postgres://social:social@pgslave1:5432/social"
+	// "postgres://social:social@pgslave2:5432/social"
+	DB_MASTER := os.Getenv("DB_MASTER")
+	DB_SLAVE1 := os.Getenv("DB_SLAVE1")
+	DB_SLAVE2 := os.Getenv("DB_SLAVE2")
+	REDIS_CONNECTION := os.Getenv("REDIS_CONNECTION")
+	SERVER_PORT := os.Getenv("SERVER_PORT")
+
 	// Инициализация БД и кэша
-	dbRepo, err := database.NewPostgresRepository(
-		"postgres://social:social@pgmaster:5432/social",
-		"postgres://social:social@pgslave1:5432/social",
-		"postgres://social:social@pgslave2:5432/social",
-	)
+	dbRepo, err := database.NewPostgresRepository(DB_MASTER, DB_SLAVE1, DB_SLAVE2)
 
 	if err != nil {
 		logger.ErrorLogger.Fatal("Failed to connect to database:", err)
@@ -27,7 +34,8 @@ func StartServer() {
 
 	logger.InfoLogger.Println("Successfully connected to database")
 
-	redisCache := cache.NewRedisCache("redis:6379")
+	//"redis:6379"
+	redisCache := cache.NewRedisCache(REDIS_CONNECTION)
 
 	// Репозитории
 	userRepo := repositories.NewUserRepository(dbRepo)
@@ -72,5 +80,5 @@ func StartServer() {
 	}
 
 	logger.InfoLogger.Println("Server starting on port 80")
-	r.Run(":80")
+	r.Run(":" + SERVER_PORT)
 }
