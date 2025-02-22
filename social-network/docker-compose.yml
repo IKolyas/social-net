@@ -6,7 +6,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: van4ik/social-net:1.0.0
+    image: van4ik/social-net:1.0.4
     environment:
       - DB_MASTER=postgres://social:social@pgmaster:5432/social
       - DB_SLAVE1=postgres://social:social@pgslave1:5432/social

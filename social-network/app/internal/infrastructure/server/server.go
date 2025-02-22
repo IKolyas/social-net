@@ -29,7 +29,7 @@ func StartServer() {
 	dbRepo, err := database.NewPostgresRepository(DB_MASTER, DB_SLAVE1, DB_SLAVE2)
 
 	if err != nil {
-		logger.ErrorLogger.Fatal("Failed to connect to database:", err)
+		logger.ErrorLogger.Printf("Failed to connect to database: %s", err)
 	}
 
 	logger.InfoLogger.Println("Successfully connected to database")
@@ -61,6 +61,7 @@ func StartServer() {
 	r := gin.Default()
 
 	// Public routes
+	r.GET("/health", func(ctx *gin.Context) { ctx.JSON(200, gin.H{"status": "ok"}) })
 	r.POST("/login", authHandler.Login)
 	r.POST("/user/register", userHandler.RegisterUser)
 
