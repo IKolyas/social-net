@@ -21,7 +21,6 @@ func NewPostgresMaster(dsn string) (*PostgresMaster, error) {
 	if err != nil {
 		return nil, err
 	}
-	db.AutoMigrate(&entities.User{}, &entities.Post{}, &entities.Friend{})
 	return &PostgresMaster{db: db}, nil
 }
 
